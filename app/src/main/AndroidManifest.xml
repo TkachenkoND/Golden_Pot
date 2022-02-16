@@ -26,12 +26,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.view.game_view.ActivityGame" />
-
-        <activity android:name=".presentation.view.game_view.ActivityMenu" />
-
-        <activity android:name=".presentation.view.game_view.ActivityProgressBar" />
-
         <activity
             android:name=".presentation.view.ViewWebka"
             android:configChanges="keyboardHidden|orientation|screenSize"

@@ -9,4 +9,8 @@
     <string name="went_wrong">Something Went Wrong!</string>
     <string name="check_connection">Please check your Network Connection!</string>
     <string name="share_w_friends">Share with your Friends</string>
+
+    <string name="txtMenu1">Your win waiting you!</string>
+    <string name="txtStartButton">Start</string>
+    <string name="txtExitButton">Go back</string>
 </resources>

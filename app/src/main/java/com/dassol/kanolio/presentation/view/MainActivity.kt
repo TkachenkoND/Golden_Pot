@@ -4,14 +4,20 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
+import com.dassol.kanolio.R
 import com.dassol.kanolio.databinding.MainActivityBinding
 import com.dassol.kanolio.domain.CheckNetwork
 import com.dassol.kanolio.domain.MyOneSignal
 import com.dassol.kanolio.domain.Parsing
+import com.dassol.kanolio.presentation.view.game_view.FragmentMenu
+import com.dassol.kanolio.presentation.view.game_view.FragmentProgressBar
+import com.dassol.kanolio.presentation.view.game_view.game.FragmentGame
 import com.dassol.kanolio.presentation.view_model.MainActivityViewModel
 import com.facebook.applinks.AppLinkData
 import com.facebook.internal.Utility
@@ -124,10 +130,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGameView() {
         OneSignal.sendTag("key1", "bot")
+        binding.pgBar.visibility = ProgressBar.GONE
 
-        Toast.makeText(this, "запускаємо гру !!", Toast.LENGTH_SHORT).show()
-        //startActivity(Intent(this, ActivityProgressBar::class.java))
-        //finish()
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.fragmentContainer, FragmentProgressBar())
+        }
     }
 
     private fun startWebView(url: String) {
