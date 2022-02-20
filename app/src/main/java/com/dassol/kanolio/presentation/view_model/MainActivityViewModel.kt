@@ -39,7 +39,7 @@ class MainActivityViewModel(
     val fullLink: LiveData<String> = _fullLink
 
     private suspend fun saveAppsDevKeyAndLinkInDb() {
-        val data = Data("3Vz9Bwt74gpEY7xac94ZRA", "https://trident.website/Jfk9YBsc")
+        val data = Data("3Vz9Bwt74gpEY7xac94ZRA", "goldenpott.xyz/goldens.php")
         dataBaseDao.saveAppsDevKeyAndLinkInDb(data)
     }
 

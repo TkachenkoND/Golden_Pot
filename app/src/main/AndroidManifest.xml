@@ -14,7 +14,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GoldenPot">
+        android:theme="@style/Theme.GoldenPot"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".presentation.view.MainActivity"
             android:exported="true">
@@ -27,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.view.ViewWebka"
+            android:name=".presentation.view.Wrapper"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="adjustResize" />
 

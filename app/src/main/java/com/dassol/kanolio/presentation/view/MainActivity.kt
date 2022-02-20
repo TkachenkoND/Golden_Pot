@@ -30,10 +30,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModel<MainActivityViewModel>()
 
-    lateinit var binding: MainActivityBinding
+    private lateinit var binding: MainActivityBinding
 
-    val parsing = Parsing()
-    var fullLink: String? = null
+    private lateinit var parsing: Parsing
+    private var fullLink: String? = null
 
     private val checkInet = CheckNetwork(this)
     private val myOneSignal = MyOneSignal()
@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        parsing = Parsing(this)
 
         viewModel.startData()
 
@@ -65,15 +67,15 @@ class MainActivity : AppCompatActivity() {
                                 gadid = getAppId(),
                                 af_id = AppsFlyerLib.getInstance()
                                     .getAppsFlyerUID(this@MainActivity),
-                                application_id = this@MainActivity.packageName,
                                 link = viewModel.appsDevKeyAndLink.value!!.link
                             )
                             Log.d("AppLog", fullLink!!)
 
                             viewModel.saveFullLinkInDataBase(fullLink!!)
 
-                            startWebView(fullLink!!)
                             myOneSignal.workWithOneSignal(data, it?.targetUri.toString())
+                            startWebView()
+
                         }
                     }
 
@@ -122,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                 if (it == "null") {
                     workWithApps()
                 } else {
-                    startWebView(it)
+                    startWebView()
                 }
             }
         }
@@ -138,10 +140,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startWebView(url: String) {
-        if (url.isNotEmpty()) {
-            startActivity(Intent(this, ViewWebka::class.java).putExtra("url", url))
-            finish()
-        }
+    private fun startWebView() {
+        startActivity(Intent(this, Wrapper::class.java))
+        finish()
     }
 }

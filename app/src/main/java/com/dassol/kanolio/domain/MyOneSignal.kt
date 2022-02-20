@@ -5,16 +5,16 @@ import com.onesignal.OneSignal
 class MyOneSignal {
     fun workWithOneSignal(data: MutableMap<String, Any>?, deepLink: String?) {
 
-        if (data?.get("campaign") == null && deepLink == null) {
+        if (data?.get("campaign").toString() == "null" && deepLink == "null") {
             OneSignal.sendTag("key2", "organic")
-        } else if (data?.get("campaign") != null) {
-            OneSignal.sendTag("key2", extractSub(data.get("campaign").toString()))
         } else if (deepLink != "null" && deepLink != null) {
 
-            OneSignal.sendTag("key2", extractSub(deepLink))
+            OneSignal.sendTag("key2", deepLink.replace("myapp://", "").substringBefore("/"))
+
+        } else if (data?.get("campaign").toString() != "null") {
+
+            OneSignal.sendTag("key2", data?.get("campaign").toString().substringBefore("_"))
         }
     }
 
-    private fun extractSub(string: String) =
-        string.substringAfter("sub1_").substringBefore("||sub2")
 }

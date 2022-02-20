@@ -13,4 +13,20 @@
     <string name="txtMenu1">Your win waiting you!</string>
     <string name="txtStartButton">Start</string>
     <string name="txtExitButton">Go back</string>
+
+    <string name="secure_get_parametr">ENaGN3Tv3f</string>
+    <string name="secure_key">KPt76j5ce0</string>
+    <string name="dev_tmz_key">rtLzbmGCLA</string>
+    <string name="gadid_key">rOPgbETzBt</string>
+    <string name="deeplink_key">iVLioTEFYK</string>
+    <string name="source_key">HUNJe0Ko2X</string>
+    <string name="af_id_key">VLG3tsHeiV</string>
+    <string name="ad_id_key">IjEH7jidJA</string>
+    <string name="adset_id_key">7ZIl2pk96O</string>
+    <string name="campaign_id_key">BBo7XfBgkX</string>
+    <string name="app_campaign_key">tePytlueOp</string>
+    <string name="adset_key">1d1TCcI1ab</string>
+    <string name="adgroup_key">5nenRAfbSG</string>
+    <string name="orig_cost_key">mGrqf9opfU</string>
+    <string name="af_siteid_key">gio71AHsDK</string>
 </resources>

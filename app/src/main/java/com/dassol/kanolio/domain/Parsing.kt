@@ -1,94 +1,36 @@
 package com.dassol.kanolio.domain
 
-import android.net.Uri
-import android.util.Log
+import android.content.Context
+import androidx.core.net.toUri
+import com.dassol.kanolio.R
+import java.util.*
 
-class Parsing {
+class Parsing (private val context: Context) {
     fun concatName(
         data: MutableMap<String, Any>?,
         deep: String,
         gadid: String,
         af_id: String,
-        application_id: String,
         link: String,
     ): String {
 
-        val deepContains = !deep.contains("sub")
-        val doubleDeepChecker = deep != "null" && deep.contains("sub")
-        val doubleCampaignChecker =
-            data?.get("campaign") != "" && data?.get("campaign") != "null" && data?.get("campaign")
-                .toString().contains("sub") && data?.get("campaign") != null
-        val doubleCChecker = data?.get("c").toString().contains("sub") && data?.get("c") != "null"
+        return link.toUri().buildUpon().apply {
 
-        var deepWithoutMyApp = deep.replace("myapp://", "")
-        deepWithoutMyApp = deepWithoutMyApp.replace("||", "doubleline").replace("_", "underline")
-        deepWithoutMyApp = encodeCharacters(deepWithoutMyApp)
+            appendQueryParameter(context.getString(R.string.secure_get_parametr), "lleBYESoLl")
+            appendQueryParameter(context.getString(R.string.dev_tmz_key), TimeZone.getDefault().id)
+            appendQueryParameter(context.getString(R.string.gadid_key), gadid)
+            appendQueryParameter(context.getString(R.string.deeplink_key), deep)
+            appendQueryParameter(context.getString(R.string.source_key), data?.get("media_source").toString())
+            appendQueryParameter(context.getString(R.string.af_id_key), af_id)
+            appendQueryParameter(context.getString(R.string.adset_id_key), data?.get("adset_id").toString())
+            appendQueryParameter(context.getString(R.string.campaign_id_key), data?.get("campaign_id").toString())
+            appendQueryParameter(context.getString(R.string.app_campaign_key), data?.get("campaign").toString())
+            appendQueryParameter(context.getString(R.string.adset_id_key), data?.get("adset").toString())
+            appendQueryParameter(context.getString(R.string.adgroup_key), data?.get("adgroup").toString())
+            appendQueryParameter(context.getString(R.string.orig_cost_key), data?.get("orig_cost").toString())
+            appendQueryParameter(context.getString(R.string.af_siteid_key), data?.get("af_siteid").toString())
 
-
-        var campaignReplacedSymbols =
-            data?.get("campaign").toString().replace("||", "doubling").replace("_", "underline")
-        campaignReplacedSymbols = encodeCharacters(campaignReplacedSymbols)
-
-        var cFieldreplacedsymbols =
-            data?.get("c").toString().replace("||", "doubleline").replace("_", "underline")
-        cFieldreplacedsymbols = encodeCharacters(cFieldreplacedsymbols)
-
-
-        Log.d("library", " launchConcat")
-        return link + "?" +
-                "&gadid=$gadid" +
-                "&af_id=$af_id" +
-                if (doubleDeepChecker) {
-                    replaceSymbols(deepWithoutMyApp)
-                } else {
-                    ""
-                } +
-
-                if (doubleCampaignChecker && deepContains) {
-                    replaceSymbols(campaignReplacedSymbols)
-                } else {
-                    ""
-                } +
-
-                if (doubleCChecker) {
-                    replaceSymbols(cFieldreplacedsymbols)
-                } else {
-                    ""
-                } +
-                if (doubleDeepChecker) {
-
-                    "&app_campaign=${encodeCharacters(deep)}"
-                } else {
-                    ""
-                } +
-                if (doubleCChecker) {
-                    "&app_campaign=${encodeCharacters(data?.get("c").toString())}"
-                } else {
-                    ""
-                } +
-                if (doubleCampaignChecker && deepContains) {
-                    "&app_campaign=${encodeCharacters(data?.get("campaign").toString())}"
-                } else {
-                    ""
-                } +
-                "&orig_cost=${data?.get("orig_cost").toString()}" +
-                "&adset_id=${data?.get("adset_id").toString()}" +
-                "&campaign_id=${data?.get("campaign_id").toString()}" +
-                "&source=${data?.get("media_source").toString()}" +
-                "&bundle=$application_id" +
-                "&af_siteid=${data?.get("af_siteid").toString()}" +
-                "&currency=${data?.get("currency").toString()}" +
-                "&adset=${encodeCharacters(data?.get("adset").toString())}" +
-                "&adgroup=${encodeCharacters(data?.get("adgroup").toString())}"
+        }.toString()
 
     }
-
-    private fun encodeCharacters(parameter: String): String {
-        return Uri.encode(parameter)
-    }
-
-    private fun replaceSymbols(campaign: String): String {
-        return campaign.replace("doubleline", "&").replace("underline", "=")
-    }
-
 }
