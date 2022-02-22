@@ -40,8 +40,8 @@ class Wrapper : AppCompatActivity() {
 
     private fun initFullLinkObserver() {
         viewModel.fullLink.observe(this) {
-            if (it != "null")
-                webView.loadUrl(it)
+            if (it.fullLink != "null")
+                webView.loadUrl(it.fullLink)
             else
                 Toast.makeText(this@Wrapper, "Error fullLink null !!!!", Toast.LENGTH_SHORT).show()
 
@@ -122,19 +122,11 @@ class Wrapper : AppCompatActivity() {
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
 
+                if (viewModel.fullLink.value!!.flag == "0" && !url?.contains("trident")!! && !url.contains("goldenpott.xyz")) {
 
-            if (viewModel.fullLink.value == "zero") {
-
-            } else {
-                if (!url?.contains("trident")!! && !url.contains("ccardsstrike")) {
-
-                    viewModel.saveFullLinkInDataBase(url)
-
-                } else {
-
+                    viewModel.saveFullLinkInDataBase(url, "1")
 
                 }
-            }
         }
     }
 

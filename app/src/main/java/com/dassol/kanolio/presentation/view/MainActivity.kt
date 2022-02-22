@@ -7,6 +7,8 @@ import android.util.Log
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.commit
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
@@ -23,6 +25,7 @@ import com.facebook.applinks.AppLinkData
 import com.facebook.internal.Utility
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.onesignal.OneSignal
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,25 +56,26 @@ class MainActivity : AppCompatActivity() {
             startGameView()
     }
 
-    private fun workWithApps() {
+    private fun workWithApps(appId: String) {
+        Log.d("AppLog", appId)
+
         viewModel.isLoading.observe(this) { vm ->
             if (vm) {
                 val conversionDataListener = object : AppsFlyerConversionListener {
                     override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
-                        Log.d("AppLog", data.toString())
                         AppLinkData.fetchDeferredAppLinkData(this@MainActivity) {
-                            Log.d("AppLog", it?.targetUri.toString())
                             fullLink = parsing.concatName(
                                 data = data,
                                 deep = it?.targetUri.toString(),
-                                gadid = getAppId(),
+                                gadid = appId,
                                 af_id = AppsFlyerLib.getInstance()
                                     .getAppsFlyerUID(this@MainActivity),
                                 link = viewModel.appsDevKeyAndLink.value!!.link
                             )
                             Log.d("AppLog", fullLink!!)
 
-                            viewModel.saveFullLinkInDataBase(fullLink!!)
+                            OneSignal.setExternalUserId(appId)
+                            viewModel.saveFullLinkInDataBase(fullLink!!,"0")
 
                             myOneSignal.workWithOneSignal(data, it?.targetUri.toString())
                             startWebView()
@@ -105,13 +109,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getAppId(): String {
-        var advertisingId = ""
+    private fun getAppId(): LiveData<String> {
+        val advertisingId = MutableLiveData<String>()
 
-        GlobalScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(this@MainActivity)
-            advertisingId = adInfo.id.toString()
-            OneSignal.setExternalUserId(advertisingId)
+            advertisingId.postValue(adInfo.id.toString())
         }
         return advertisingId
     }
@@ -121,8 +124,11 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.fullLink.observe(this@MainActivity) {
-                if (it == "null") {
-                    workWithApps()
+                if (it.fullLink == "null") {
+                    getAppId().observe(this@MainActivity) { appId ->
+                        if (!appId.isNullOrEmpty())
+                            workWithApps(appId)
+                    }
                 } else {
                     startWebView()
                 }

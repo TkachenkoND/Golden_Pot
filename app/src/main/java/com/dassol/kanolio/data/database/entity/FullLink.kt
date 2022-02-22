@@ -9,4 +9,6 @@ data class FullLink(
     @PrimaryKey
     @ColumnInfo(name = "fullLink")
     var fullLink: String,
+    @ColumnInfo(name = "flag")
+    var flag: String,
 )

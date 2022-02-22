@@ -8,6 +8,7 @@ import com.dassol.kanolio.data.database.dao.DataBaseDao
 import com.dassol.kanolio.data.database.dao.FullLinkDataBaseDao
 import com.dassol.kanolio.data.database.entity.Data
 import com.dassol.kanolio.data.database.entity.FullLink
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -35,8 +36,8 @@ class MainActivityViewModel(
     private val _appsDevKeyAndLink = MutableLiveData<Data>()
     val appsDevKeyAndLink: LiveData<Data> = _appsDevKeyAndLink
 
-    private val _fullLink = MutableLiveData<String>()
-    val fullLink: LiveData<String> = _fullLink
+    private val _fullLink = MutableLiveData<FullLink>()
+    val fullLink: LiveData<FullLink> = _fullLink
 
     private suspend fun saveAppsDevKeyAndLinkInDb() {
         val data = Data("3Vz9Bwt74gpEY7xac94ZRA", "goldenpott.xyz/goldens.php")
@@ -44,19 +45,19 @@ class MainActivityViewModel(
     }
 
     //Full Link
-    fun saveFullLinkInDataBase(fullLink: String) {
-        val fullLink = FullLink(fullLink)
-        viewModelScope.launch {
+    fun saveFullLinkInDataBase(fullLink: String, flag: String) {
+        val fullLink = FullLink(fullLink, flag)
+        viewModelScope.launch(Dispatchers.IO) {
             fullLinkDataBaseDao.saveFullLinkInDb(fullLink)
         }
     }
 
     fun fetchFullLinkFromDataBase() {
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (fullLinkDataBaseDao.checkDataBase() != null)
-                _fullLink.postValue(fullLinkDataBaseDao.getFullLinkFromDataBase().fullLink)
+                _fullLink.postValue(fullLinkDataBaseDao.getFullLinkFromDataBase())
             else
-                _fullLink.postValue("null")
+                _fullLink.postValue(FullLink("null","null"))
         }
     }
 
